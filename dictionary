@@ -49,6 +49,17 @@ for key, values in d.items():
 for ascii_char in range(97, 123):
     print(chr(ascii_char), end=" ")
 
+print()
+
+import string
+"""
+string  is a built-in module and string.ascii_lowercase  returns a string object containing all 26 letters of the English alphabet. 
+Then we simply iterate through that string and print out the string items.
+"""
+
+for letter in string.ascii_lowercase:
+    print(letter, end=" ")
+
 
 """
 Output
@@ -67,5 +78,6 @@ Smith
 a has values  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 b has values  [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 c has values  [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
-a b c d e f g h i j k l m n o p q r s t u v w x y z 
+a b c d e f g h i j k l m n o p q r s t u v w x y z
+a b c d e f g h i j k l m n o p q r s t u v w x y z
 """
