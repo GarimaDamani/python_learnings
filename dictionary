@@ -1,0 +1,71 @@
+temp_dict={'a':1, 'b':2}
+print(temp_dict)
+"""
+A dict  function is another way to create a dictionary. dict  is also used to convert other objects to a dictionary
+"""
+d= dict(a=1, b=2)
+print(d)
+print(d['b'])
+
+# Calculate the sum of the values of keys a  and b
+sum = 0
+for value in d:
+    sum += d[value]
+d['c'] = sum
+print(d)
+
+# A KeyError always means Python could not find a key 
+Q = {"Name": "John", "Surname": "Smith"}
+print(Q["Surname"])
+
+sum = 0
+for val in d.values():
+    sum += val
+
+print(sum)
+
+for key in list(d):
+    if d[key] > 1:
+        del d[key]
+
+print(d)
+
+d = {"a": 1, "b": 2, "c": 3}
+d = dict((key, value) for key, value in d.items() if value <= 1)
+print(d)
+
+from pprint import pprint
+"""
+built-in Python pprint  module, which is used to print out well-formatted views of datatypes in Python.
+"""
+d = {"a": list(range(1, 11)), "b": list(range(11, 21)), "c": list(range(21, 31))}
+
+pprint(d)
+print(d["b"][2])
+
+for key, values in d.items():
+    print(key, "has values ", values)
+
+for ascii_char in range(97, 123):
+    print(chr(ascii_char), end=" ")
+
+
+"""
+Output
+{'a': 1, 'b': 2}
+{'a': 1, 'b': 2}
+2
+{'a': 1, 'b': 2, 'c': 3}
+Smith
+6
+{'a': 1}
+{'a': 1}
+{'a': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+ 'b': [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+ 'c': [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]}
+13
+a has values  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+b has values  [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+c has values  [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+a b c d e f g h i j k l m n o p q r s t u v w x y z 
+"""
