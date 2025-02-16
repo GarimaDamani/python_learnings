@@ -1,0 +1,72 @@
+"""
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+You can return the answer in any order.
+
+Example 1:
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+Example 2:
+
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+"""
+
+class Solution(object):
+    def twoSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+        for i in range(len(nums)): 
+            for j in range(i + 1, len(nums)):
+                if nums[i] + nums[j] == target:
+                    return [i, j]
+
+# Example Usage
+nums = [2, 7, 11, 15]
+target = 9
+
+solution = Solution()
+print(solution.twoSum(nums, target))
+
+solution = Solution() 
+result = solution.twoSum(nums, target)
+print(result)
+
+
+"""
+Complexity:
+There are two nested loops:
+The outer loop runs n times.
+The inner loop runs n - 1, n - 2, ..., 1 times.
+In the worst case, this results in approximately n²/2 iterations.
+Dropping constants, the overall complexity is O(n²).
+
+O(1) (constant space), since we are not using any extra data structures apart from the input list.
+"""
+
+"""
+Optimized approach by using dictionary/hashmap.
+Time Complexity: O(n) (single pass through the array)
+Space Complexity: O(n) (dictionary storage for numbers seen)
+"""
+
+class Solution(object):
+    def twoSum(self, nums, target):
+        num_map = {}
+        for i, num in enumerate(nums):
+            compliment = target - num
+            if compliment in num_map:
+                return [num_map[compliment], i]
+            num_map[num] = i
+
+nums = [3,2,4]
+target = 6
+
+solution = Solution()
+result = solution.twoSum(nums, target)
+print(result)
