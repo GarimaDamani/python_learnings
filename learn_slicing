@@ -1,0 +1,27 @@
+letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
+
+print(letters[1])
+print(letters[3:6])
+print(letters[:3])
+print(letters[-2])
+print(letters[-3:])
+
+# a, c, e, g, i
+print(letters[::2])
+
+new_list = []
+for index, l in enumerate(letters):
+    if index%2 == 0:
+        new_list.append(l)
+print(new_list)
+
+"""
+Output
+b
+['d', 'e', 'f']
+['a', 'b', 'c']
+i
+['h', 'i', 'j']
+['a', 'c', 'e', 'g', 'i']
+['a', 'c', 'e', 'g', 'i']
+"""
