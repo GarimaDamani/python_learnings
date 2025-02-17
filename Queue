@@ -1,0 +1,55 @@
+from collections import deque
+
+class Queue:
+    def __init__(self):
+        self.container = deque()
+
+    def enqueue(self, value):
+        self.container.append(value)
+
+    def dequeue(self):
+        return self.container.popleft() if not self.is_empty() else None 
+
+    def peek(self):
+        return self.container[0] if not self.is_empty() else None 
+
+    def is_empty(self):
+        return len(self.container) == 0
+
+    def size(self):
+        return len(self.container)
+
+    def print_queue(self):
+        print("Queue elements:", list(self.container))
+
+
+q = Queue()
+q.enqueue(10)
+q.enqueue(20)
+q.enqueue(30)
+q.print_queue()
+print("Size:", q.size())
+print("dequeue:",q.dequeue())
+q.print_queue()
+print("peek:", q.peek())
+print("Size:", q.size())
+print("dequeue:",q.dequeue())
+print("dequeue:",q.dequeue())
+print("dequeue:",q.dequeue())
+print("peek:", q.peek())
+print("Size:", q.size())
+
+"""
+Output
+Queue elements: [10, 20, 30]
+Size: 3
+dequeue: 10
+Queue elements: [20, 30]
+peek: 20
+Size: 2
+dequeue: 20
+dequeue: 30
+dequeue: None
+peek: None
+Size: 0
+"""
