@@ -1,0 +1,73 @@
+"""Write a function that takes two sorted linked lists and merges them into a single sorted linked list."""
+
+class Nodes:
+    def __init__(self, value):
+        self.data = value
+        self.next = None
+
+class SortedLinkedlist:
+    def __init__(self):
+        self.head = None
+
+    def append(self, value):
+        new_node = Nodes(value)
+        if not self.head:
+            self.head = new_node
+            return
+        last_node = self.head
+        while last_node.next:
+            last_node = last_node.next
+        last_node.next = new_node
+
+    def display_ll(self):
+        current = self.head
+        while current:
+            print(current.data, end= " -> ")
+            current = current.next
+        print("None")
+
+def merge_ll(l1, l2):
+    dummy = Node(-1)
+    tail = dummy
+    while l1 and l2:
+        if l1.data < l2. data:
+            tail.next = l1
+            l1 = l1.next
+        else:
+            tail.next = l2
+            l2 = l2.next
+        tail = tail.next
+
+    tail.next = l1 if l1 else l2
+    return dummy.next
+
+object1 = SortedLinkedlist()
+object1.append(10)
+object1.append(20)
+object1.append(30)
+object1.append(40)
+object1.append(80)
+object1.append(800)
+object1.display_ll()
+
+object2 = SortedLinkedlist()
+object2.append(11)
+object2.append(22)
+object2.append(33)
+object2.append(44)
+object2.display_ll()
+
+merged_head = merge_ll(object1.head, object2.head)
+merged_list = SortedLinkedlist()
+merged_list.head = merged_head
+merged_list.display_ll()
+
+# Time complexity: O(N + M) length of both the sorted list
+# Space complexity: O(1) we have used few pointers
+
+"""
+Output
+10 -> 20 -> 30 -> 40 -> 80 -> 800 -> None
+11 -> 22 -> 33 -> 44 -> None
+10 -> 11 -> 20 -> 22 -> 30 -> 33 -> 40 -> 44 -> 80 -> 800 -> None
+"""
