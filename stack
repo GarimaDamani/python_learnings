@@ -14,7 +14,8 @@ class Stack:
     def peek(self):
         return self.container[-1] if not self.is_empty() else None
     def stack_print(self):
-        print("Stack elements:", list(self.container)) 
+        # Print elements from top to bottom (reverse the order)
+        print("Stack elements (top to bottom):", list(self.container)[::-1])
 
 object = Stack()
 object.push(10)
@@ -35,11 +36,11 @@ object.stack_print()
 Output
 peek: 10
 Size: 1
-Stack elements: [10]
-Stack elements: [10, 20, 30]
+Stack elements (top to bottom): [10]
+Stack elements (top to bottom): [30, 20, 10]
 Size: 3
 pop: 30
 peek: 20
 Size: 2
-Stack elements: [10, 20]
+Stack elements (top to bottom): [20, 10]
 """
