@@ -57,16 +57,16 @@ class DoublyLinkedList:
         current = self.head
         while current and current.data != value:
             current = current.next
-        if not current:
+        if not current: # If we reached the end (current == None), the element is not in the list.
             print("Value not found")
             return
-        if current.prev:
+        if current.prev: # If the node to be deleted is not the head (current.prev is not None), we update the previous node's next pointer.
             current.prev.next = current.next
-        if current.next:
+        if current.next: # If current.next is not None, it means current is not the last node.
             current.next.prev = current.prev
         if current == self.head:  # If head is deleted, update head
             self.head = current.next
-        del current
+        del current # Deletes temp to free memory.
 
 
 dl = DoublyLinkedList()
