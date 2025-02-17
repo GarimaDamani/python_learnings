@@ -1,0 +1,45 @@
+from collections import deque
+
+class Stack:
+    def __init__(self):
+        self.container = deque()
+    def push(self, value):
+        self.container.append(value)
+    def pop(self):
+        return self.container.pop() if not self.is_empty() else none
+    def is_empty(self):
+        return len(self.container) == 0
+    def size(self):
+        return len(self.container)
+    def peek(self):
+        return self.container[-1] if not self.is_empty() else none
+    def stack_print(self):
+        print("Stack elements:", list(self.container)) 
+
+object = Stack()
+object.push(10)
+print("peek:", object.peek())
+print("Size:", object.size())
+object.stack_print()
+object.push(20)
+object.push(30)
+object.stack_print()
+print("Size:", object.size())
+print("pop:", object.pop())
+print("peek:", object.peek())
+print("Size:", object.size())
+object.stack_print()
+
+
+"""
+Output
+peek: 10
+Size: 1
+Stack elements: [10]
+Stack elements: [10, 20, 30]
+Size: 3
+pop: 30
+peek: 20
+Size: 2
+Stack elements: [10, 20]
+"""
