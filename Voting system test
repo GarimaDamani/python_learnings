@@ -1,0 +1,31 @@
+import unittest
+from VotingSystem import Vote
+
+class MyTestCase(unittest.TestCase):
+    def setUp(self):
+        self.vote_system = Vote(["Alice", "Bob", "Danny"])
+
+    def test_valid_vote(self):
+        self.vote_system.cast_vote("user1", "Alice")
+        self.assertEqual(self.vote_system.candidates["Alice"], 1)
+
+    def test_valid_duplicate_vote(self):
+        self.vote_system.cast_vote("user1", "Alice")
+        self.assertEqual(self.vote_system.candidates["Alice"], 1)
+        self.assertFalse(self.vote_system.cast_vote("user1", "Alice"))
+
+    def test_valid_invalid_candidate(self):
+        self.assertFalse(self.vote_system.cast_vote("user2", "Aliceii"))
+
+    def test_valid_winner(self):
+        self.vote_system.cast_vote("user1", "Alice")
+        self.vote_system.cast_vote("user2", "Bob")
+        self.vote_system.cast_vote("user3", "Alice")
+        self.vote_system.cast_vote("user4", "Alice")
+        self.vote_system.cast_vote("user5", "Danny")
+        self.assertEqual(self.vote_system.candidates["Alice"], 3)
+        self.assertEqual(self.vote_system.publish_results(), "Alice")
+
+
+if __name__ == '__main__':
+    unittest.main()
