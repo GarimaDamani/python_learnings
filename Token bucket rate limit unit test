@@ -1,0 +1,76 @@
+import logging
+import threading
+import unittest
+import time
+
+import tokenBucket
+from tokenBucket import TokenBucket
+
+class MyTestCase(unittest.TestCase):
+    def setUp(self):
+        self.bucket_user1 = TokenBucket(bucket_capacity=10, token_refill_rate=1)
+        self.bucket_user2 = TokenBucket(bucket_capacity=5, token_refill_rate=1)
+
+    def test_initial_setup(self):
+        self.assertEqual(self.bucket_user1.bucket_capacity, 10)
+
+    def test_token_consumption(self):
+        self.assertTrue(self.bucket_user1.consume(2))
+        self.assertEqual(self.bucket_user1.tokens_in_bucket, 8)
+
+    def test_rate_limit(self):
+        self.assertTrue(self.bucket_user1.consume(10))
+        self.assertFalse(self.bucket_user1.consume(1))
+
+    def test_refill_token(self):
+        self.assertTrue(self.bucket_user1.consume(10))
+        self.assertFalse(self.bucket_user1.consume(1))
+        time.sleep(4)
+        self.assertTrue(self.bucket_user1.consume(2))
+
+    def test_zero_token(self):
+        self.assertTrue(self.bucket_user1.consume(0))
+        self.assertEqual(self.bucket_user1.tokens_in_bucket, 10)
+
+    def test_negative_token(self):
+        self.assertFalse(self.bucket_user1.consume(-1))
+        self.assertEqual(self.bucket_user1.tokens_in_bucket, 10)
+
+    def test_multi_user_token(self):
+        for _ in range(5):
+            self.assertTrue(self.bucket_user1.consume(2))
+        for _ in range(5):
+            self.assertTrue(self.bucket_user2.consume(1))
+
+        self.assertFalse(self.bucket_user1.consume(2))
+        self.assertFalse(self.bucket_user2.consume(2))
+
+    def test_concurrent_request(self):
+        def user_requests(user_id, num_requests, interval):
+            rate_limiter = tokenBucket.get_rate_limiter(user_id=user_id)
+            for _ in range(num_requests):
+                rate_limiter.consume(1)
+                time.sleep(interval)
+
+        threads = []
+        for user_id, num_requests, interval in [("user_1", 5, 0.5), ("user_2", 5, 0.5)]:
+            thread = threading.Thread(target=user_requests, args=(user_id, num_requests, interval))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+        user_1_rate_limiter = tokenBucket.user_rate_limiters["user_1"]
+        user_2_rate_limiter = tokenBucket.user_rate_limiters["user_2"]
+
+        logging.info(user_1_rate_limiter.tokens_in_bucket)
+        logging.info(user_2_rate_limiter.tokens_in_bucket)
+        self.assertTrue(user_1_rate_limiter.tokens_in_bucket < 10)  # Should be less than initial capacity.
+        self.assertFalse(user_2_rate_limiter.tokens_in_bucket < 5)
+
+        self.assertGreater(self.bucket_user1.tokens_in_bucket, 0)
+        self.assertGreater(self.bucket_user2.tokens_in_bucket, 0)
+
+if __name__ == '__main__':
+    unittest.main()
