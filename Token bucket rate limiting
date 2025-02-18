@@ -1,0 +1,44 @@
+# Design and implement a rate limiter to control the number of requests a user can make to an API within a given timeframe.
+
+import time
+import logging
+import threading
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+class TokenBucket:
+    def __init__(self, bucket_capacity, token_refill_rate):
+        self.bucket_capacity = bucket_capacity # Max number of tokens bucket can hold
+        self.tokens_in_bucket = float(bucket_capacity) # Initial tokens in the bucket
+        self.token_refill_rate = token_refill_rate # number of tokens added per second
+        self.last_token_refill_time = time.time()
+        self.lock = threading.Lock()
+
+    def refill(self):
+        current_time = time.time()
+        time_diff = current_time - self.last_token_refill_time
+        new_tokens = (time_diff * self.token_refill_rate)
+        self.tokens_in_bucket = min(self.bucket_capacity, self.tokens_in_bucket + new_tokens)
+        self.last_token_refill_time = current_time
+        logging.info(f"Time_diff {time_diff:0.2f} | Refilled {new_tokens:.2f} tokens | Available tokens: {self.tokens_in_bucket:.2f}")
+
+    def consume(self, tokens_needed):
+        with self.lock:
+            self.refill()
+            if tokens_needed < 0:
+                return False
+            if self.tokens_in_bucket >= tokens_needed:
+                self.tokens_in_bucket -= tokens_needed
+                logging.info(f"Allowing the request | Tokens left {self.tokens_in_bucket:.2f}")
+                return True
+            else:
+                logging.warning(f"Denying the request | Tokens left {self.tokens_in_bucket:.2f}")
+                return False
+
+
+user_rate_limiters = {}
+
+def get_rate_limiter(user_id, bucket_capacity=10, token_refill_rate=2):
+    if user_id not in user_rate_limiters:
+        user_rate_limiters[user_id] = TokenBucket(bucket_capacity, token_refill_rate)
+    return user_rate_limiters[user_id]
