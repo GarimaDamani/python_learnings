@@ -1,4 +1,5 @@
 import logging
+import threading
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -6,19 +7,20 @@ class Vote:
     def __init__(self, candidates):
         self.voters = set()
         self.candidates = {candidate: 0 for candidate in candidates}
+        self.lock = threading.Lock()
 
     def cast_vote(self, voter_id, candidate):
         if voter_id in self.voters:
             logging.warning(f"{voter_id} has already casted vote. This vote won't be counted.")
             return False
-
-        if candidate in self.candidates:
-            self.candidates[candidate] += 1
-            self.voters.add(voter_id)
-            logging.info(f"{voter_id} has successfully casted vote. Thank you!.")
-        else:
-            logging.warning(f"{candidate} selected is not in candidate list.")
-            return False
+        with self.lock:
+            if candidate in self.candidates:
+                self.candidates[candidate] += 1
+                self.voters.add(voter_id)
+                logging.info(f"{voter_id} has successfully casted vote. Thank you!.")
+            else:
+                logging.warning(f"{candidate} selected is not in candidate list.")
+                return False
 
     def publish_results(self):
         logging.info(f"****** Here are voting results ******")
