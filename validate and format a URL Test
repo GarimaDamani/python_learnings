@@ -1,0 +1,38 @@
+import unittest
+import urlValidatorFormator
+
+class MyTestCase(unittest.TestCase):
+    def test_empty_url(self):
+        self.assertFalse(urlValidatorFormator.validate_format_url(""))
+        self.assertFalse(urlValidatorFormator.validate_format_url("  "))
+
+    def test_valid_url(self):
+        urls = [
+            "https://example.com",
+            "example.com",
+            "http://www.example.com:9090",
+            "facebook.com/garimadamani",
+            "https://www.example.com:8080/path/to/resource?query=value#fragment",
+            "https://www.example.com:8080/path/to/resource=value#fragment",
+            "ww.test.au/90//index.html"
+        ]
+        for link in urls:
+            self.assertTrue(urlValidatorFormator.validate_format_url(link), True)
+
+    def test_invalid_url(self):
+        urls = [
+            "http://",
+            "example",
+            "http://.com",
+            "://example.com",
+            "http://example   .com",
+            "http://-example.com",
+            "htp://example..com",
+            "ftp://example.com"
+        ]
+        for link in urls:
+            with self.assertRaises(ValueError):
+                urlValidatorFormator.validate_format_url(link)
+
+if __name__ == '__main__':
+    unittest.main()
