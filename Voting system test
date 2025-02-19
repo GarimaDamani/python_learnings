@@ -26,6 +26,23 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(self.vote_system.candidates["Alice"], 3)
         self.assertEqual(self.vote_system.publish_results(), "Alice")
 
+    def test_multi_user_voting(self):
+        from concurrent.futures import ThreadPoolExecutor
+        votes = [
+            ("user1", "Alice"),
+            ("user2", "Bob"),
+            ("user3", "Alice"),
+            ("user4", "Alice"),
+            ("user5", "Danny")
+        ]
+        # Using ThreadPoolExecutor to simulate concurrent voting
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            for voter, candidate in votes:
+                executor.submit(self.vote_system.cast_vote(voter_id=voter, candidate=candidate))
+
+        self.assertEqual(self.vote_system.candidates["Alice"], 3)
+        self.assertEqual(self.vote_system.publish_results(), "Alice")
+
 
 if __name__ == '__main__':
     unittest.main()
