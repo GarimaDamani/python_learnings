@@ -1,48 +1,22 @@
 # Write a function to validate and format a URL.
-
 import re
 import urllib.parse
 
 def validate_format_url(url):
-    if not url.startswith(('https://', 'https://')):
-        url = "https://" + url
+    print(f"Input url:{url}", end=" ")
+    if len(url) <= 0 or url.isspace():
+        return False
+    if not url.startswith(('http://', 'https://')):
+        url = "http://" + url
 
     regex = re.compile(r'^(https?://)?[a-z0-9]+(\.[a-z0-9]+)+(:[0-9]+)?(/.*)?$', re.IGNORECASE)
     if not regex.match(url):
+        print(f"*** Invalid url:{url}")
         raise ValueError(f"Invalid url: {url}")
 
     parsed_url = urllib.parse.urlparse(url)
-    formatted_url = urllib.parse.urlunparse((parsed_url.scheme, parsed_url.netloc, parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment))
+    formatted_url = urllib.parse.urlunparse((parsed_url.scheme, parsed_url.netloc,
+                                             parsed_url.path, parsed_url.params, parsed_url.query, parsed_url.fragment))
 
-    return formatted_url
-
-
-urls = [
-    "https://example.com",
-    "https://example",
-    "example.com",
-    "http://www.example.com:9090",
-    "facebook.com/garimadamani",
-    "https://www.example.com:8080/path/to/resource?query=value#fragment",
-    "https://www.example.com:8080/path/to/resource=value#fragment",
-    "ww.test.au/90//index.html"
-]
-for i in urls:
-    try:
-        print("Intput URL:", i, end=" ")
-        print("Formatted URL:", validate_format_url(i))
-    except ValueError as e:
-        print(e)
-
-
-"""
-Output
-Intput URL: https://example.com Formatted URL: https://example.com
-Intput URL: https://example Invalid url: https://example
-Intput URL: example.com Formatted URL: https://example.com
-Intput URL: http://www.example.com:9090 Invalid url: https://http://www.example.com:9090
-Intput URL: facebook.com/garimadamani Formatted URL: https://facebook.com/garimadamani
-Intput URL: https://www.example.com:8080/path/to/resource?query=value#fragment Formatted URL: https://www.example.com:8080/path/to/resource?query=value#fragment
-Intput URL: https://www.example.com:8080/path/to/resource=value#fragment Formatted URL: https://www.example.com:8080/path/to/resource=value#fragment
-Intput URL: ww.test.au/90//index.html Formatted URL: https://ww.test.au/90//index.html
-"""
+    print(f"Formatted url:{formatted_url}")
+    return True
