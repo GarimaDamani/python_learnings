@@ -1,0 +1,37 @@
+"""
+Given a string and a character, return an array with each character’s minimum distance from the given character.
+Example: atlassian and a → [0,1,1,0,1,2,1,0,1]
+"""
+
+def minimum_distance(s):
+    if len(s) == 0 or s.isspace():
+        return False
+    if len(target) != 1 or target.isspace():
+        return False
+    if target not in s:
+        return False
+
+    counter = float('inf')
+    result = [float('inf')] * s_len
+    s_len = len(s)
+
+    for i in range(s_len):
+        if s[i] == target:
+            counter = 0
+        else:
+            counter += 1
+        result[i] = counter
+
+    counter = float('inf')
+    for i in range(s_len - 1 , -1, -1):
+        if s[i] == target:
+            counter = 0
+        else:
+            counter += 1
+            result[i] = min(result[i], counter)
+    return result
+
+
+target = "A"
+s = "ATLASSIAN"
+print(minimum_distance(s))
