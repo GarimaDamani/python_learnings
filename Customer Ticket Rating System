@@ -1,0 +1,91 @@
+"""
+You are designing a Customer Ticket Rating System where users can rate support tickets between 1 to 5 stars. Your implementation should allow:
+
+Thread-safe ticket rating updates to ensure data integrity in a concurrent environment.
+Efficient retrieval of the top-N and bottom-N rated tickets based on their average rating.
+Validation of inputs (invalid ticket IDs, incorrect rating values).
+Tasks:
+
+Implement the CustomerTicketRating class to support:
+Creating new tickets.
+Allowing users to rate existing tickets.
+Fetching the top-N and bottom-N rated tickets efficiently.
+Write unit tests to cover edge cases like:
+Rating an invalid ticket ID.
+Providing an out-of-range rating.
+Handling cases where there are fewer than N tickets.
+
+Constraints:
+
+Multiple threads should be able to rate tickets concurrently without data corruption.
+The system should fetch top/bottom N tickets efficiently (without sorting the entire dataset).
+A ticket's average rating is updated dynamically as new ratings are added.
+Follow-ups:
+
+How would you optimize sorting performance if we need frequent retrieval of top/bottom tickets?
+How would you scale this system if millions of tickets are rated daily?
+What happens if a ticket has never been rated? How should your system handle this?
+"""
+
+import threading
+import logging
+import uuid
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+class CustomerTicketRating:
+    def __init__(self):
+        self.lock = threading.Lock()
+        # defining rating as list will make the check for O(n) times. while set will do it in O(1)
+        self.rating = {1, 2, 3, 4, 5}
+        self.ticket_dict = dict()
+        # self.sorted_tickets = []
+
+    def create_ticket(self):
+        new_ticket_id = uuid.uuid4()
+        self.ticket_dict[new_ticket_id] = (0, 0, 0.0) # (rating_sum, count, average)
+        return new_ticket_id
+
+    def rate_ticket(self, rating, ticket_id):
+        if not isinstance(rating, int) or rating not in self.rating :
+            logging.error(f"Invalid rating")
+            return False
+        if ticket_id not in self.ticket_dict:
+            logging.error(f"Invalid ticket id")
+            return False
+
+        with self.lock:
+            rating_sum, count, _ = self.ticket_dict[ticket_id]
+            rating_sum += rating
+            count += 1
+            average = round(rating_sum / count, 2) if count > 0 else 0.0
+            self.ticket_dict[ticket_id] = (rating_sum, count, average)
+        # logging.info(f"Ticket {ticket_id} has been rated. New average rating: {average:.2f} (Total Ratings: {count})")
+        return True
+
+    def sort_tickets(self, n):
+        import heapq
+        top_k_tickets = heapq.nlargest(n, self.ticket_dict.items(), key=lambda x: x[1][2])
+        bottom_k_tickets = heapq.nsmallest(n, self.ticket_dict.items(), key=lambda x: x[1][2])
+        return top_k_tickets, bottom_k_tickets
+
+    # def sort_tickets(self, is_reverse):
+    #     self.sorted_tickets = sorted(self.ticket_dict.items(), key=lambda x: x[1][2], reverse=is_reverse)
+
+    def get_n_tickets(self, n):
+        if n > len(self.ticket_dict):
+            n = len(self.ticket_dict)
+        # self.sort_tickets(is_reverse=True)
+        top_tickets, bottom_tickets = self.sort_tickets(n)
+        logging.info(f"****** Top {n} rated tickets ******")
+        for i in range(n): # Handle cases where n > available tickets
+            ticket_id, (rating_sum, count, avg_rating) = top_tickets[i] # self.sorted_tickets[i]
+            logging.info(
+                f"Ticket ID: {ticket_id}, Total Rating: {rating_sum}, Count: {count}, Average: {avg_rating}")
+
+        logging.info(f"****** Bottom {n} rated tickets ******")
+        for i in range(n):
+            ticket_id, (rating_sum, count, avg_rating) = bottom_tickets[i] # self.sorted_tickets[-(i + 1)]
+            logging.info(
+                f"Ticket ID: {ticket_id}, Total Rating: {rating_sum}, Count: {count}, Average: {avg_rating}")
+        return top_tickets, bottom_tickets
