@@ -67,5 +67,20 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(avg_rating, 3.0)
         self.assertEqual(count, 1)
 
+    def rate_ticket_thread(self, rating):
+        return self.customer_ticket.rate_ticket(rating=rating, ticket_id=self.ticket_id1)
+
+    def test_multithreading_rating(self):
+        from concurrent.futures import ThreadPoolExecutor
+        ratings = [1, 2, 3, 4, 5] * 10  # Simulate multiple ratings
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            results = list(executor.map(self.rate_ticket_thread, ratings))
+
+        self.assertTrue(all(results))  # Ensure all ratings were successfully processed
+        _, count, avg_rating = self.customer_ticket.ticket_dict[self.ticket_id1]
+        self.assertEqual(count, len(ratings))  # Ensure all ratings were recorded
+        self.assertTrue(1 <= avg_rating <= 5)  # Average should be within the valid rating range
+
+
 if __name__ == '__main__':
     unittest.main()
