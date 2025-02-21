@@ -3,7 +3,9 @@ Given a string and a character, return an array with each character’s minimum 
 Example: atlassian and a → [0,1,1,0,1,2,1,0,1]
 """
 
-def minimum_distance(s):
+def minimum_distance(s, target):
+    target = target.lower()
+    s = s.lower()
     if len(s) == 0 or s.isspace():
         return False
     if len(target) != 1 or target.isspace():
@@ -11,9 +13,9 @@ def minimum_distance(s):
     if target not in s:
         return False
 
+    s_len = len(s)
     counter = float('inf')
     result = [float('inf')] * s_len
-    s_len = len(s)
 
     for i in range(s_len):
         if s[i] == target:
@@ -32,6 +34,20 @@ def minimum_distance(s):
     return result
 
 
-target = "A"
-s = "ATLASSIAN"
-print(minimum_distance(s))
+target_char = "A"
+string = "Atlassian"
+print(minimum_distance(string, target_char))
+target_char = "a"
+string = "Namaste"
+print(minimum_distance(string, target_char))
+target_char = "A"
+string = "Namaste India"
+print(minimum_distance(string, target_char))
+
+
+"""
+Output
+[0, 1, 1, 0, 1, 2, 1, 0, 1]
+[1, 0, 1, 0, 1, 2, 3]
+[1, 0, 1, 0, 1, 2, 3, 4, 4, 3, 2, 1, 0]
+"""
