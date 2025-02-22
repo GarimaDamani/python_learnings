@@ -20,15 +20,15 @@ class GameOverException(Exception):
     pass
 
 class Snake:
-    def __init__(self):
-        self.snake_body = deque([(0, 0), (0, 1), (0, 2)])
+    def __init__(self, position1, position2, position3):
+        self.snake_body = deque([position1, position2, position3])
         self.directions = {
             "UP": (-1, 0),      # Decrease row
             "DOWN": (1, 0),     # Increase row
             "LEFT": (0, -1),    # Decrease column
             "RIGHT": (0, 1)     # Increase column
         }
-        self.collision = {(0, 0),(0, 1), (0, 2)}
+        self.collision = {position1, position2, position3}
 
     def move_snake(self, direction):
         if not isinstance(direction, str):
@@ -61,3 +61,4 @@ class Snake:
         if position in self.collision:
             return True
         return False
+
