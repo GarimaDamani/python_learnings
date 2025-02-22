@@ -4,7 +4,8 @@ from SnakeGame import GameOverException
 
 class MyTestCase(unittest.TestCase):
     def setUp(self):
-        self.snake = Snake()
+        self.snake = Snake(position1=(0,0), position2=(0,1), position3=(0,2))
+        #self.snake = Snake(position1=(4, 4), position2=(4, 5), position3=(4, 6))
 
     def test_invalid_direction(self):
         self.assertFalse(self.snake.move_snake(""))
@@ -31,15 +32,22 @@ class MyTestCase(unittest.TestCase):
     def test_opposite_direction(self):
         self.assertTrue(self.snake.move_snake("Right"))
         self.assertFalse(self.snake.move_snake("Left"))
+        self.assertTrue(self.snake.move_snake("down"))
 
     def test_snake_growth(self):
+        old_x, old_y = self.snake.snake_body[-1]
+        old_x += 1; old_y += 0 # "DOWN": (1, 0)
+        old_x += 0; old_y += 1  # "RIGHT": (0, 1)
+        old_x += 1; old_y += 0  # "DOWN": (1, 0)
         self.assertTrue(self.snake.move_snake("down"))
         self.assertTrue(self.snake.move_snake("right"))
         self.assertTrue(self.snake.move_snake("down"))
-        self.assertEqual(self.snake.snake_body[-1],(2,3))
+
+        self.assertEqual(self.snake.snake_body[-1],(old_x,old_y))
 
     def test_negative_move(self):
-        self.assertRaises(GameOverException, self.snake.move_snake, "up")
+        self.snake1 = Snake(position1=(0, 0), position2=(0, 1), position3=(0, 2))
+        self.assertRaises(GameOverException, self.snake1.move_snake, "up")
 
 if __name__ == '__main__':
     unittest.main()
