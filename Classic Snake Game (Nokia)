@@ -1,0 +1,63 @@
+"""
+consider the classic nokia snake game. Snake can move only right, left, up and down. Initial height/length of snake is 3. 
+while it moves it grows by 1. and game ends when the snake bits itself. implement the basic functionality.
+Assumptions:
+1. don't consider game board size.
+2. snake grows when it moves right, left, up and down
+3. no food placement
+4. Movement Input by user
+5. no boundaries/walls: it dies when it bites itself
+6. Initial Position (0, 0), (0, 1), (0, 2): initial height of snake is 3
+7. False move if snake moves 180 degree that means in opposite direction.
+"""
+
+import logging
+from collections import deque
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+class GameOverException(Exception):
+    pass
+
+class Snake:
+    def __init__(self):
+        self.snake_body = deque([(0, 0), (0, 1), (0, 2)])
+        self.directions = {
+            "UP": (-1, 0),      # Decrease row
+            "DOWN": (1, 0),     # Increase row
+            "LEFT": (0, -1),    # Decrease column
+            "RIGHT": (0, 1)     # Increase column
+        }
+        self.collision = {(0, 0),(0, 1), (0, 2)}
+
+    def move_snake(self, direction):
+        if not isinstance(direction, str):
+            logging.error(f"Invalid Move: {direction} is not a valid direction.")
+            return False
+        direction = direction.upper()
+        if direction not in self.directions:
+            logging.error(f"Invalid Move: {direction} is not a valid direction.")
+            return False
+        x, y = self.snake_body[-1]
+        new_x, new_y = self.directions[direction]
+        new_x += x
+        new_y += y
+        if new_y < 0 or new_x < 0:
+            logging.error(f"Snake moving in negative. Game Over.")
+            raise GameOverException
+        prev_x, prev_y = self.snake_body[-2]
+        if (new_x, new_y) == (prev_x, prev_y):
+            logging.error("Invalid Move: Cannot move in the opposite direction.")
+            return False
+        if self.is_collision((new_x, new_y)):
+            logging.error(f"Snake collided at {new_x, new_y}. Game Over.")
+            raise GameOverException
+        self.snake_body.append((new_x, new_y))
+        self.collision.add((new_x, new_y))
+        logging.info(f"Moved Snake {direction} from {x, y} to {new_x, new_y}")
+        return True
+
+    def is_collision(self, position):
+        if position in self.collision:
+            return True
+        return False
